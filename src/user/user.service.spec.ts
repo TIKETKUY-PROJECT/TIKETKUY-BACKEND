@@ -35,7 +35,7 @@ describe('UserService', () => {
     it('should return array of users', async () => {
       const users: User[] = [testUser];
       prisma.user.findMany.mockResolvedValueOnce(users);
-      const result = await service.getAllUser();
+      const result = await service.findAllUser();
       expect(result).toEqual(users);
       expect(result).toHaveLength(1);
       expect(prisma.user.findMany).toBeCalledTimes(1);
