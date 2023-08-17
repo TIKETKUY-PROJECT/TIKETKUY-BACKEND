@@ -1,6 +1,6 @@
 FROM node:18
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 COPY package*.json ./
 
@@ -15,8 +15,6 @@ ENV JWT_SECRET ${JWT_SECRET}
 ENV SALT_ROUNDS ${SALT_ROUNDS}
 
 RUN npm install --legacy-peer-deps
-RUN npm i -g --legacy-peer-deps @nestjs/cli
-RUN npm i --save-dev --legacy-peer-deps @types/node
 
 COPY . .
 
