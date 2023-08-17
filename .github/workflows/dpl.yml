@@ -79,4 +79,5 @@ jobs:
             DATABASE_URL=${{secrets.DATABASE_URL}}
             JWT_SECRET=${{secrets.JWT_SECRET}}
             SALT_ROUNDS=${{secrets.SALT_ROUNDS}}
+          no-cache: true
     if: github.ref == 'refs/heads/main'
