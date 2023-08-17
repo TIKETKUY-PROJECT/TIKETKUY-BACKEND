@@ -16,6 +16,7 @@ ENV SALT_ROUNDS ${SALT_ROUNDS}
 
 RUN npm install --legacy-peer-deps
 RUN npm i -g --legacy-peer-deps @nestjs/cli
+RUN npm i --save-dev --legacy-peer-deps @types/node
 
 COPY . .
 
