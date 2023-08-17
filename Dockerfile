@@ -15,6 +15,7 @@ ENV JWT_SECRET ${JWT_SECRET}
 ENV SALT_ROUNDS ${SALT_ROUNDS}
 
 RUN npm install --legacy-peer-deps
+RUN npm i -g --legacy-peer-deps @nestjs/cli
 
 COPY . .
 
