@@ -75,9 +75,8 @@ jobs:
           push: true
           tags: ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPOSITORY}}:latest
           build-args: |
-            NODE_ENV = production
-            DATABASE_URL = ${{secrets.DATABASE_URL}}
-            JWT_SECRET = ${{secrets.JWT_SECRET}}
-            SALT_ROUNDS = ${{secrets.SALT_ROUNDS}}
-          no-cache: true
+            NODE_ENV="production"
+            DATABASE_URL=${{secrets.DATABASE_URL}}
+            JWT_SECRET=${{secrets.JWT_SECRET}}
+            SALT_ROUNDS=${{secrets.SALT_ROUNDS}}
     if: github.ref == 'refs/heads/main'
