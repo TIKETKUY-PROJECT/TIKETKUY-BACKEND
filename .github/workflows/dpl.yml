@@ -91,12 +91,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{secrets.GCLOUD_SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
       - name: SSH to google cloud
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{secrets.GCP_USERNAME}}@${{secrets.EXTERNAL_IP}} "
           docker container rm -f tiketkuy-backend || true &&
-          docker image rm -f ${{secrets.DOCKER_REPOSITORY}}:latest || true &&
-          docker pull ${{secrets.DOCKER_REPOSITORY}}:latest &&
+          docker image rm -f ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPOSITORY}}:latest || true &&
+          docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPOSITORY}}:latest &&
           docker run --name tiketkuy-backend -d -p 3001:3001 ${{secrets.DOCKER_REPOSITORY}}:latest"
     if: github.ref == 'refs/heads/main'
