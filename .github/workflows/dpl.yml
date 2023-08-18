@@ -1,4 +1,4 @@
-name: tiketkuy CI
+name: tiketkuy CI/CD
 
 on:
   push:
@@ -79,4 +79,19 @@ jobs:
             DATABASE_URL=${{secrets.DATABASE_URL}}
             JWT_SECRET=${{secrets.JWT_SECRET}}
             SALT_ROUNDS=${{secrets.SALT_ROUNDS}}
+    if: github.ref == 'refs/heads/main'
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Chmod private key
+        run: chmod 600 ${{secrets.GCLOUD_SSH_PRIVATE_KEY}}
+      - name: SSH to google cloud
+        run: |
+          ssh -i ${{secrets.GCLOUD_SSH_PRIVATE_KEY}} ${{secrets.GCP_USERNAME}}@${{secrets.EXTERNAL_IP}}\
+          "docker pull ${{secrets.DOCKER_REPOSITORY}}:latest &&\
+           docker run --name tiketkuy-backend -d -p 3001:3001 ${{secrets.DOCKER_REPOSITORY}}:latest"
     if: github.ref == 'refs/heads/main'
