@@ -94,7 +94,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
       - name: SSH to google cloud
         run: |
-          ssh -i ~/.ssh/id_rsa ${{secrets.GCP_USERNAME}}@${{secrets.EXTERNAL_IP}}\
-          'docker pull ${{secrets.DOCKER_REPOSITORY}}:latest &&\
-           docker run --name tiketkuy-backend -d -p 3001:3001 ${{secrets.DOCKER_REPOSITORY}}:latest'
+          ssh -i ~/.ssh/id_rsa ${{secrets.GCP_USERNAME}}@${{secrets.EXTERNAL_IP}} << EOF
+          docker pull ${{secrets.DOCKER_REPOSITORY}}:latest
+          docker run --name tiketkuy-backend -d -p 3001:3001 ${{secrets.DOCKER_REPOSITORY}}:latest
     if: github.ref == 'refs/heads/main'
