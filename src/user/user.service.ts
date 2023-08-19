@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserRequest, UserResponse } from './dto';
@@ -22,10 +22,7 @@ export class UserService {
         message: 'success',
       };
     } catch (e) {
-      result = {
-        data: null,
-        message: 'failed',
-      };
+      throw new BadRequestException('credentials have been taken!');
     }
     return result;
   }

@@ -4,6 +4,7 @@ import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, PrismaClient, User } from '@prisma/client';
 import { CreateUserRequest, UserResponse } from './dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UserService', () => {
   let service: UserService;
@@ -17,7 +18,7 @@ describe('UserService', () => {
       .useValue(mockDeep<PrismaClient>())
       .compile();
 
-    service = module.get<UserService>(UserService);
+    service = module.get(UserService);
     prisma = module.get(PrismaService);
     testUser = {
       id: 1,
@@ -72,11 +73,9 @@ describe('UserService', () => {
           clientVersion: '5.1.1',
         }),
       );
-      const result = await service.createUser(duplicatedUserDto);
-      expect(result).toMatchObject<UserResponse>({
-        data: null,
-        message: 'failed',
-      });
+      expect(service.createUser(duplicatedUserDto)).rejects.toThrow(
+        BadRequestException,
+      );
       expect(prisma.user.create).toBeCalledTimes(1);
     });
   });
