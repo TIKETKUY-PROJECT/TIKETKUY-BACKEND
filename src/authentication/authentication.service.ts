@@ -42,7 +42,9 @@ export class AuthenticationService {
 
   async signUp(dto: AuthRequest) {
     try {
-      const salt = await bcrypt.genSalt(this.configService.get('SALT_ROUNDS'));
+      const salt = await bcrypt.genSalt(
+        Number(this.configService.get('SALT_ROUNDS')),
+      );
       const hashedPassword = await bcrypt.hash(dto.password, salt);
       const user = await this.prismaService.user.create({
         data: {
@@ -60,7 +62,7 @@ export class AuthenticationService {
       };
       return result;
     } catch (e) {
-      throw e;
+      throw new BadRequestException('Email has been registered!');
     }
   }
 }
