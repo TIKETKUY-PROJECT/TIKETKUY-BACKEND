@@ -26,6 +26,7 @@ describe('UserService', () => {
       createdAt: new Date(),
       email: 'test@gmail.com',
       password: 'test',
+      isValidated: false,
     };
   });
 

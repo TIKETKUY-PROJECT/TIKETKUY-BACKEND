@@ -1,19 +1,24 @@
 import {
+  BadRequestException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
-import { LoginRequest } from './dto';
+import { AuthRequest } from './dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { CommonResponse } from 'src/common/dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthenticationService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
-  async login(dto: LoginRequest): Promise<User | null> {
+  async login(dto: AuthRequest) {
     const user = await this.prismaService.user.findFirst({
       where: {
         email: dto.email,
@@ -22,6 +27,33 @@ export class AuthenticationService {
     if (!user) throw new UnauthorizedException('User is not registered!');
     if (!(await bcrypt.compare(dto.password, user.password)))
       throw new UnauthorizedException('Email or password is incorrect!');
-    return null;
+
+    const result: CommonResponse = {
+      data: {
+        accessToken: await this.jwtService.sign({
+          id: user.id,
+          createdAt: user.createdAt,
+          email: user.email,
+        }),
+      },
+      message: 'success',
+    };
+    return result;
+  }
+
+  async signUp(dto: AuthRequest) {
+    try {
+      const salt = await bcrypt.genSalt(this.configService.get('SALT_ROUNDS'));
+      const hashedPassword = await bcrypt.hash(dto.password, salt);
+      const user = await this.prismaService.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+        },
+      });
+      return user;
+    } catch (e) {
+      throw new BadRequestException('Credentials Invalid');
+    }
   }
 }
