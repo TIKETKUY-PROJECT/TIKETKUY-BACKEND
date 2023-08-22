@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserRequest, UserResponse } from './dto';
+import { CreateUserRequest } from './dto';
+import { CommonResponse } from 'src/common/dto';
 
 @Injectable()
 export class UserService {
@@ -11,8 +12,8 @@ export class UserService {
     return await this.prismaService.user.findMany();
   }
 
-  async createUser(dto: CreateUserRequest): Promise<UserResponse | null> {
-    let result: UserResponse;
+  async createUser(dto: CreateUserRequest): Promise<CommonResponse | null> {
+    let result: CommonResponse;
     try {
       const user = await this.prismaService.user.create({
         data: { email: dto.email, password: dto.password },

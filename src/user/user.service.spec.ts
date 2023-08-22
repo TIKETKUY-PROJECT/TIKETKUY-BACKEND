@@ -3,8 +3,9 @@ import { UserService } from './user.service';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma, PrismaClient, User } from '@prisma/client';
-import { CreateUserRequest, UserResponse } from './dto';
+import { CreateUserRequest } from './dto';
 import { BadRequestException } from '@nestjs/common';
+import { CommonResponse } from 'src/common/dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -53,7 +54,7 @@ describe('UserService', () => {
 
       prisma.user.create.mockResolvedValueOnce(createdUser);
       const result = await service.createUser(createUserDto);
-      expect(result).toMatchObject<UserResponse>({
+      expect(result).toMatchObject<CommonResponse>({
         data: (({ id, createdAt, email }) => ({ id, createdAt, email }))(
           createdUser,
         ),
