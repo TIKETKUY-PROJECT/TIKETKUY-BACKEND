@@ -27,7 +27,6 @@ export class AuthenticationService {
     if (!user) throw new UnauthorizedException('User is not registered!');
     if (!(await bcrypt.compare(dto.password, user.password)))
       throw new UnauthorizedException('Email or password is incorrect!');
-
     const result: CommonResponse = {
       data: {
         accessToken: await this.jwtService.sign({
@@ -51,9 +50,17 @@ export class AuthenticationService {
           password: hashedPassword,
         },
       });
-      return user;
+      const result: CommonResponse = {
+        data: {
+          id: user.id,
+          createdAt: user.createdAt,
+          email: user.email,
+        },
+        message: 'success',
+      };
+      return result;
     } catch (e) {
-      throw new BadRequestException('Credentials Invalid');
+      throw new BadRequestException('Email has been registered!');
     }
   }
 }
