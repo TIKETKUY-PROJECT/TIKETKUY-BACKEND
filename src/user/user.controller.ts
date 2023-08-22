@@ -6,7 +6,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('all')
-  findAllUser(): any {
-    return 'hello world';
+  async findAllUser(): Promise<any> {
+    return await this.userService.findAllUser();
   }
 }
