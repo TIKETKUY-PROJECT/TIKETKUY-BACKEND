@@ -3,7 +3,7 @@ import { AuthenticationService } from './authentication.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient, User } from '@prisma/client';
+import { Prisma, PrismaClient, User } from '@prisma/client';
 import { AuthRequest } from './dto';
 import { CommonResponse } from 'src/common/dto';
 import { ConfigService } from '@nestjs/config';
@@ -106,6 +106,67 @@ describe('AuthenticationService', () => {
       }
       expect(prismaService.user.findFirst).toBeCalledTimes(1);
       expect(mockBcryptCompare).toBeCalledTimes(1);
+    });
+  });
+
+  describe('signup', () => {
+    it('should return user without password when success', async () => {
+      const req: AuthRequest = {
+        email: 'halo@gmail.com',
+        password: 'halo',
+      };
+      const expectedRes: CommonResponse = {
+        data: {
+          id: testUser.id,
+          createdAt: testUser.createdAt,
+          email: testUser.email,
+        },
+        message: 'success',
+      };
+      const mockConf = jest.spyOn(configService, 'get');
+      mockConf.mockImplementationOnce(() => 'halo');
+      const mockBcryptGenSalt = jest.fn().mockResolvedValue(12);
+      (bcrypt.genSalt as jest.Mock) = mockBcryptGenSalt;
+      const mockBcryptHash = jest.fn().mockResolvedValue('hashhh');
+      (bcrypt.hash as jest.Mock) = mockBcryptHash;
+      prismaService.user.create.mockResolvedValueOnce(testUser);
+
+      const result = await authService.signUp(req);
+
+      expect(result).toMatchObject(expectedRes);
+      expect(mockBcryptGenSalt).toBeCalledTimes(1);
+      expect(mockBcryptHash).toBeCalledTimes(1);
+      expect(prismaService.user.create).toBeCalledTimes(1);
+    });
+
+    it('should throw email has been registered error', async () => {
+      const dupReq: AuthRequest = {
+        email: 'halo@gmail.com',
+        password: 'halo',
+      };
+      const mockConf = jest.spyOn(configService, 'get');
+      mockConf.mockImplementationOnce(() => 'halo');
+      const mockBcryptGenSalt = jest.fn().mockResolvedValue(12);
+      (bcrypt.genSalt as jest.Mock) = mockBcryptGenSalt;
+      const mockBcryptHash = jest.fn().mockResolvedValue('hashhh');
+      (bcrypt.hash as jest.Mock) = mockBcryptHash;
+      prismaService.user.create.mockRejectedValueOnce(
+        new Prisma.PrismaClientKnownRequestError('failed', {
+          code: 'P2002',
+          clientVersion: '5.1.1',
+        }),
+      );
+
+      try {
+        await authService.signUp(dupReq);
+      } catch (e) {
+        expect(e).toMatchObject(
+          new UnauthorizedException('Email has been registered!'),
+        );
+      }
+      expect(mockBcryptGenSalt).toBeCalledTimes(1);
+      expect(mockBcryptHash).toBeCalledTimes(1);
+      expect(prismaService.user.create).toBeCalledTimes(1);
     });
   });
 });
