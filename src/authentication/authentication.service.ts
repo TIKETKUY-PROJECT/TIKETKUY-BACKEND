@@ -62,7 +62,7 @@ export class AuthenticationService {
       };
       return result;
     } catch (e) {
-      throw new BadRequestException('Email has been registered!');
+      throw new UnauthorizedException('Email has been registered!');
     }
   }
 }
