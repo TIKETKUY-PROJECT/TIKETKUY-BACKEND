@@ -24,8 +24,7 @@ export class AuthenticationService {
         email: dto.email,
       },
     });
-    if (!user) throw new UnauthorizedException('User is not registered!');
-    if (!(await bcrypt.compare(dto.password, user.password)))
+    if (!user || !(await bcrypt.compare(dto.password, user.password)))
       throw new UnauthorizedException('Email or password is incorrect!');
     const result: CommonResponse = {
       data: {
