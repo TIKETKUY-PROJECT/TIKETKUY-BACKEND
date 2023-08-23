@@ -8,11 +8,15 @@ import { CommonResponse } from 'src/common/dto';
 export class UserService {
   constructor(private prismaService: PrismaService) {}
 
-  async findAllUser(): Promise<User[]> {
-    return await this.prismaService.user.findMany();
+  async findAllUser() {
+    const result: CommonResponse = {
+      data: await this.prismaService.user.findMany(),
+      message: 'success',
+    };
+    return result;
   }
 
-  async createUser(dto: CreateUserRequest): Promise<CommonResponse | null> {
+  async createUser(dto: CreateUserRequest) {
     let result: CommonResponse;
     try {
       const user = await this.prismaService.user.create({

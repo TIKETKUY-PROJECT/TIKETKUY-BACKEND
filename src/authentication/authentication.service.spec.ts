@@ -73,7 +73,7 @@ describe('AuthenticationService', () => {
       expect(mockBcryptCompare).toBeCalledTimes(1);
     });
 
-    it('should return user is not registered error', async () => {
+    it('should return email or password is incorrect error when user not found', async () => {
       const req: AuthRequest = {
         email: 'halo@gmail.com',
         password: 'halo',
@@ -83,13 +83,13 @@ describe('AuthenticationService', () => {
         await authService.login(req);
       } catch (e) {
         expect(e).toMatchObject(
-          new UnauthorizedException('User is not registered!'),
+          new UnauthorizedException('Email or password is incorrect!'),
         );
       }
       expect(prismaService.user.findFirst).toBeCalledTimes(1);
     });
 
-    it('should return email or password is incorrect error', async () => {
+    it('should return email or password is incorrect error when password incorrect', async () => {
       const req: AuthRequest = {
         email: 'halo@gmail.com',
         password: 'halo',

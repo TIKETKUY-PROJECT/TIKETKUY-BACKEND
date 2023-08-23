@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Tiketkuy Backend')
-    .setDescription('Tiketkuy Backend API Description')
+    .setDescription('Tiketkuy Backend API Documentation')
     .setVersion('1.0')
     .build();
 
