@@ -41,7 +41,7 @@ describe('AuthenticationService', () => {
       createdAt: new Date(),
       email: 'test@gmail.com',
       password: 'test',
-      isValidated: false,
+      role: 'USER',
     };
 
     testAccessToken = 'halo';
