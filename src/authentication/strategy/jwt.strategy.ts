@@ -29,6 +29,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException(
         "User doesn't have access to this information!",
       );
-    return payload;
+    return user;
   }
 }
