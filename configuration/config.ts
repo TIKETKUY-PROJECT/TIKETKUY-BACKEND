@@ -6,5 +6,6 @@ export default () => ({
       'postgresql://postgres:postgres@localhost:5432/tiketkuy?schema=public',
   },
   JWT_SECRET: process.env.JWT_SECRET || 'AKUCINTAKAMUJANCUK',
+  RT_SECRET: process.env.RT_SECRET || 'AKUTIDAKCINTAKAMUJANCUK',
   SALT_ROUNDS: process.env.SALT_ROUNDS || 10,
 });

@@ -24,6 +24,7 @@ describe('UserController', () => {
       email: 'test@gmail.com',
       password: 'test',
       role: 'USER',
+      hashedRt: null,
     };
   });
 
