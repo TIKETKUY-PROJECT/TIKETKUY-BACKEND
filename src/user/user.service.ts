@@ -1,8 +1,7 @@
+import { CommonResponse } from '@modules/common';
+import { PrismaService } from '@modules/prisma';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserRequest } from './dto';
-import { CommonResponse } from 'src/common/dto';
 
 @Injectable()
 export class UserService {

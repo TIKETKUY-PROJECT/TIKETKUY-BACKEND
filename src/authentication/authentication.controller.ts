@@ -1,15 +1,13 @@
-import { Body, Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
-import { AuthRequest } from './dto';
-import { AuthenticationService } from './authentication.service';
+import { CommonResponse } from '@modules/common/dto';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CommonResponse } from 'src/common/dto';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthenticationService } from './authentication.service';
+import { AuthRequest } from './dto';
 
 @ApiTags('Authentication')
 @Controller('api/v1/authentication')

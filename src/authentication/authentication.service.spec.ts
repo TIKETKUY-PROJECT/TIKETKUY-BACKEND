@@ -1,14 +1,14 @@
-import { JwtService } from '@nestjs/jwt';
-import { AuthenticationService } from './authentication.service';
-import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { Prisma, PrismaClient, User } from '@prisma/client';
-import { AuthRequest } from './dto';
-import { CommonResponse } from 'src/common/dto';
-import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
+import { CommonResponse } from '@modules/common';
+import { PrismaService } from '@modules/prisma';
 import { UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Prisma, PrismaClient, User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { AuthenticationService } from './authentication.service';
+import { AuthRequest } from './dto';
 
 describe('AuthenticationService', () => {
   let authService: AuthenticationService;

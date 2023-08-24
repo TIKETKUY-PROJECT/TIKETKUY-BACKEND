@@ -1,15 +1,15 @@
+import { CommonResponse } from '@modules/common';
+import { PrismaService } from '@modules/prisma';
 import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthRequest } from './dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { CommonResponse } from 'src/common/dto';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import { AuthRequest } from './dto';
 
 @Injectable()
 export class AuthenticationService {
