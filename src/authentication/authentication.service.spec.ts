@@ -17,6 +17,7 @@ describe('AuthenticationService', () => {
   let configService: ConfigService;
   let testUser: User;
   let testAccessToken: string;
+  let testRefreshToken: string;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,9 +43,11 @@ describe('AuthenticationService', () => {
       email: 'test@gmail.com',
       password: 'test',
       role: 'USER',
+      hashedRt: null,
     };
 
     testAccessToken = 'halo';
+    testRefreshToken = 'halo';
   });
 
   describe('login', () => {
@@ -56,19 +59,35 @@ describe('AuthenticationService', () => {
       const expectedRes: CommonResponse = {
         data: {
           accessToken: testAccessToken,
+          refreshToken: testRefreshToken,
         },
         message: 'success',
       };
 
-      const mockJwtSign = jest.spyOn(jwtService, 'sign');
-      const mockBcryptCompare = jest.fn().mockResolvedValue(true);
-      (bcrypt.compare as jest.Mock) = mockBcryptCompare;
-      mockJwtSign.mockImplementation((payload: any) => testAccessToken);
       prismaService.user.findFirst.mockResolvedValueOnce(testUser);
+
+      const mockBcryptCompare = jest.fn().mockResolvedValueOnce(true);
+      (bcrypt.compare as jest.Mock) = mockBcryptCompare;
+
+      const mockGenerateTokenService = jest.spyOn(
+        authService,
+        'generateTokens',
+      );
+      mockGenerateTokenService.mockResolvedValueOnce({
+        accessToken: testAccessToken,
+        refreshToken: testRefreshToken,
+      });
+
+      const mockUpdateUserRtService = jest.spyOn(authService, 'updateRt');
+      mockUpdateUserRtService.mockImplementationOnce(async () =>
+        Promise.resolve(),
+      );
+
       const result = await authService.login(req);
 
       expect(result).toMatchObject(expectedRes);
-      expect(mockJwtSign).toBeCalledTimes(1);
+      expect(mockGenerateTokenService).toBeCalledTimes(1);
+      expect(mockUpdateUserRtService).toBeCalledTimes(1);
       expect(prismaService.user.findFirst).toBeCalledTimes(1);
       expect(mockBcryptCompare).toBeCalledTimes(1);
     });
@@ -123,19 +142,16 @@ describe('AuthenticationService', () => {
         },
         message: 'success',
       };
-      const mockConf = jest.spyOn(configService, 'get');
-      mockConf.mockImplementationOnce(() => 'halo');
-      const mockBcryptGenSalt = jest.fn().mockResolvedValue(12);
-      (bcrypt.genSalt as jest.Mock) = mockBcryptGenSalt;
-      const mockBcryptHash = jest.fn().mockResolvedValue('hashhh');
-      (bcrypt.hash as jest.Mock) = mockBcryptHash;
+
+      const mockHashDataService = jest.spyOn(authService, 'hashData');
+      mockHashDataService.mockResolvedValueOnce('hashed of halo');
+
       prismaService.user.create.mockResolvedValueOnce(testUser);
 
       const result = await authService.signUp(req);
 
       expect(result).toMatchObject(expectedRes);
-      expect(mockBcryptGenSalt).toBeCalledTimes(1);
-      expect(mockBcryptHash).toBeCalledTimes(1);
+      expect(mockHashDataService).toBeCalledTimes(1);
       expect(prismaService.user.create).toBeCalledTimes(1);
     });
 
@@ -144,19 +160,16 @@ describe('AuthenticationService', () => {
         email: 'halo@gmail.com',
         password: 'halo',
       };
-      const mockConf = jest.spyOn(configService, 'get');
-      mockConf.mockImplementationOnce(() => 'halo');
-      const mockBcryptGenSalt = jest.fn().mockResolvedValue(12);
-      (bcrypt.genSalt as jest.Mock) = mockBcryptGenSalt;
-      const mockBcryptHash = jest.fn().mockResolvedValue('hashhh');
-      (bcrypt.hash as jest.Mock) = mockBcryptHash;
+
+      const mockHashDataService = jest.spyOn(authService, 'hashData');
+      mockHashDataService.mockResolvedValueOnce('hashed of halo');
+
       prismaService.user.create.mockRejectedValueOnce(
         new Prisma.PrismaClientKnownRequestError('failed', {
           code: 'P2002',
           clientVersion: '5.1.1',
         }),
       );
-
       try {
         await authService.signUp(dupReq);
       } catch (e) {
@@ -164,8 +177,7 @@ describe('AuthenticationService', () => {
           new UnauthorizedException('Email has been registered!'),
         );
       }
-      expect(mockBcryptGenSalt).toBeCalledTimes(1);
-      expect(mockBcryptHash).toBeCalledTimes(1);
+      expect(mockHashDataService).toBeCalledTimes(1);
       expect(prismaService.user.create).toBeCalledTimes(1);
     });
   });

@@ -21,4 +21,5 @@ model User {
   email     String   @unique
   password  String
   role      Role     @default(USER)
+  hashedRt  String?
 }
