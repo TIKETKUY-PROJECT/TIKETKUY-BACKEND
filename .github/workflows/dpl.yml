@@ -19,6 +19,11 @@ jobs:
         run: npm run build
       - name: Run test
         run: npm run test:cov
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage
 
   database-migration:
     runs-on: ubuntu-latest

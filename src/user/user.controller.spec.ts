@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@modules/prisma';
 import { User } from '@prisma/client';
-import { CommonResponse } from 'src/common/dto';
+import { CommonResponse } from '@modules/common';
 
 describe('UserController', () => {
   let controller: UserController;
